@@ -142,6 +142,12 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
   }
 
   // ── Screen 1: History ───────────────────────────────────────
+  const today = new Date()
+  const tenDaysAgo = new Date(today)
+  tenDaysAgo.setDate(today.getDate() - 9)
+  const minDate = tenDaysAgo.toISOString().slice(0, 10)
+  const maxDate = today.toISOString().slice(0, 10)
+
   const filtered = history
     .filter(h => h.bankId === bank.id)
     .filter(h => !dateFilter || h.date === dateFilter)
@@ -164,6 +170,8 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
           <input
             type="date"
             value={dateFilter}
+            min={minDate}
+            max={maxDate}
             onChange={e => setDateFilter(e.target.value)}
             className="text-sm text-[#18163f] dark:text-[#e2e8f0] focus:outline-none bg-transparent [color-scheme:light] dark:[color-scheme:dark]"
           />
