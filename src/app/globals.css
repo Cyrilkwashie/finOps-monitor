@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Class-based dark mode — .dark class on ThemeLayout wrapper div */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --navy: #0a1628;
+  --navy-deep: #060e1c;
+  --teal: #2dd4bf;
+  --blue-accent: #3b82f6;
+  /* Reference design system */
+  --primary: #18163f;
+  --card: #ffffff;
+  --border: #e5e5e5;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --radius: 0.625rem;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,.26); border-radius: 3px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::selection { color: #0f172a; background-color: rgba(45,212,191,.3); }
+
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); }
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* FinOps Brand Colors */
+  --color-finops-cream:    #F0E5CF;
+  --color-finops-offwhite: #F7F6F2;
+  --color-finops-silver:   #C8C6C6;
+  --color-finops-steel:    #4B6587;
+  --color-finops-dark:     #2E3D4F;
+
+  /* Dashboard Navy/Teal tokens */
+  --color-navy:      #0a1628;
+  --color-navy-deep: #060e1c;
+  --color-teal:      #2dd4bf;
+  --color-primary:   #18163f;
+  --color-border:    #e5e5e5;
+  --color-muted:     #f5f5f5;
+  --color-muted-fg:  #737373;
+
+  /* Dark palette tokens */
+  --color-dark-bg:     #0f172a;
+  --color-dark-card:   #1e293b;
+  --color-dark-border: #334155;
+  --color-dark-muted:  #94a3b8;
+  --color-dark-text:   #e2e8f0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
