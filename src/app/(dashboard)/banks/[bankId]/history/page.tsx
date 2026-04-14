@@ -5,6 +5,12 @@ import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react'
 
 import { banks, history } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
+import type { HistoryEntry } from '@/lib/types'
+
+function fmt(s?: string) {
+  if (!s) return '—'
+  return new Date(s).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+}
 
 type View = 'history' | 'procedures'
 
@@ -14,14 +20,16 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
 
   const [view, setView] = useState<View>('history')
   const [selectedOpType, setSelectedOpType] = useState<'SOD' | 'POD' | 'EOD' | null>(null)
+  const [selectedHistory, setSelectedHistory] = useState<HistoryEntry | null>(null)
   const [dateFilter, setDateFilter] = useState('')
 
   if (!bank) return null
 
   const dur = (s: number) => { const m = Math.floor(s / 60); return m ? `${m}m` : `${s}s` }
 
-  function selectOp(opType: 'SOD' | 'POD' | 'EOD') {
+  function selectOp(opType: 'SOD' | 'POD' | 'EOD', entry: HistoryEntry) {
     setSelectedOpType(opType)
+    setSelectedHistory(entry)
     setView('procedures')
   }
 
@@ -49,31 +57,46 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
         </div>
 
         {/* Summary strip */}
-        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 px-6 py-5 flex items-center gap-8">
-          <div>
-            <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">Total</p>
-            <p className="text-2xl font-bold text-[#18163f] dark:text-[#e2e8f0] mt-1">{op.procedureCount}</p>
-          </div>
-          <div>
-            <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">Completed</p>
-            <p className="text-2xl font-bold text-emerald-500 mt-1">{op.completedCount}</p>
-          </div>
-          {op.status === 'running' && (
+        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 px-6 py-5 space-y-4">
+          <div className="flex items-center gap-8">
             <div>
-              <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">Progress</p>
-              <p className="text-2xl font-bold text-teal-500 mt-1">{op.progress}%</p>
+              <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">Total</p>
+              <p className="text-2xl font-bold text-[#18163f] dark:text-[#e2e8f0] mt-1">{op.procedureCount}</p>
             </div>
-          )}
-          <div className="ml-auto w-32">
-            <div className="h-2 bg-[#f5f5f5] dark:bg-[#334155] rounded-full">
-              <div
-                className="h-2 bg-[#2dd4bf] rounded-full transition-all"
-                style={{ width: `${op.procedureCount > 0 ? Math.round((op.completedCount / op.procedureCount) * 100) : 0}%` }}
-              />
+            <div>
+              <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">Completed</p>
+              <p className="text-2xl font-bold text-emerald-500 mt-1">{op.completedCount}</p>
             </div>
-            <p className="text-xs text-[#737373] dark:text-[#94a3b8] mt-1 text-right">
-              {op.procedureCount > 0 ? Math.round((op.completedCount / op.procedureCount) * 100) : 0}%
-            </p>
+            {op.status === 'running' && (
+              <div>
+                <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">Progress</p>
+                <p className="text-2xl font-bold text-teal-500 mt-1">{op.progress}%</p>
+              </div>
+            )}
+            <div className="ml-auto w-32">
+              <div className="h-2 bg-[#f5f5f5] dark:bg-[#334155] rounded-full">
+                <div
+                  className="h-2 bg-[#2dd4bf] rounded-full transition-all"
+                  style={{ width: `${op.procedureCount > 0 ? Math.round((op.completedCount / op.procedureCount) * 100) : 0}%` }}
+                />
+              </div>
+              <p className="text-xs text-[#737373] dark:text-[#94a3b8] mt-1 text-right">
+                {op.procedureCount > 0 ? Math.round((op.completedCount / op.procedureCount) * 100) : 0}%
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-6 border-t border-[#e5e5e5] dark:border-[#334155] pt-4">
+            {[
+              { label: 'Operator', value: selectedHistory?.initiatedBy ?? '—' },
+              { label: 'Started',  value: fmt(selectedHistory?.startedAt) },
+              { label: 'Ended',    value: fmt(selectedHistory?.completedAt) },
+              { label: 'Duration', value: selectedHistory ? dur(selectedHistory.duration) : '—' },
+            ].map(m => (
+              <div key={m.label}>
+                <p className="text-xs text-[#737373] dark:text-[#94a3b8] uppercase tracking-widest">{m.label}</p>
+                <p className="text-sm font-medium text-[#18163f] dark:text-[#e2e8f0] font-mono mt-0.5">{m.value}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -157,11 +180,12 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
 
       {/* History table */}
       <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 overflow-hidden">
-        <div className="grid grid-cols-[1fr_80px_110px_80px_100px_32px] text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] px-6 py-3 border-b border-[#e5e5e5] dark:border-[#334155] bg-[#fafafa] dark:bg-[#0f172a]/50">
+        <div className="grid grid-cols-[1fr_80px_110px_80px_140px_90px_32px] text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] px-6 py-3 border-b border-[#e5e5e5] dark:border-[#334155] bg-[#fafafa] dark:bg-[#0f172a]/50">
           <span>Date</span>
           <span>Type</span>
           <span>Status</span>
           <span>Duration</span>
+          <span>Operator</span>
           <span>Procedures</span>
           <span />
         </div>
@@ -173,13 +197,21 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
         {filtered.map((h, i) => (
           <button
             key={i}
-            onClick={() => selectOp(h.opType)}
-            className="w-full grid grid-cols-[1fr_80px_110px_80px_100px_32px] items-center px-6 py-4 border-b border-[#e5e5e5] dark:border-[#334155] last:border-0 hover:bg-[#fafafa] dark:hover:bg-white/5 transition-colors text-left group"
+            onClick={() => selectOp(h.opType, h)}
+            className="w-full grid grid-cols-[1fr_80px_110px_80px_140px_90px_32px] items-center px-6 py-4 border-b border-[#e5e5e5] dark:border-[#334155] last:border-0 hover:bg-[#fafafa] dark:hover:bg-white/5 transition-colors text-left group"
           >
-            <span className="text-sm text-[#18163f] dark:text-[#e2e8f0] font-mono">{h.date}</span>
+            <div>
+              <p className="text-sm text-[#18163f] dark:text-[#e2e8f0] font-mono">{h.date}</p>
+              {h.startedAt && (
+                <p className="text-xs text-[#737373] dark:text-[#94a3b8] mt-0.5 font-mono">
+                  {fmt(h.startedAt)}{h.completedAt ? ` → ${fmt(h.completedAt)}` : ''}
+                </p>
+              )}
+            </div>
             <span className="text-sm font-mono font-semibold text-[#18163f] dark:text-[#e2e8f0]">{h.opType}</span>
             <span><StatusBadge status={h.status} size="xs" /></span>
             <span className="text-sm font-mono text-[#737373] dark:text-[#94a3b8]">{dur(h.duration)}</span>
+            <span className="text-sm text-[#737373] dark:text-[#94a3b8] truncate pr-2">{h.initiatedBy ?? '—'}</span>
             <div>
               <span className="text-sm text-[#737373] dark:text-[#94a3b8]">{h.proceduresRun}</span>
               {h.proceduresFailed > 0 && (

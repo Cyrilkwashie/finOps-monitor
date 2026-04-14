@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getBankById } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
-import { ChevronLeft, History, Clock, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react'
+import { ChevronLeft, History, Clock, CheckCircle2, AlertTriangle, Loader2, User } from 'lucide-react'
 import type { Operation } from '@/lib/types'
 
 function fmt(s?: string) {
@@ -48,8 +48,18 @@ function OpCard({ op, bankId }: { op: Operation; bankId: string }) {
         </div>
         <div className="flex justify-between mt-2 text-sm text-[#737373] dark:text-[#94a3b8]">
           <span>Started: {fmt(op.startedAt)}</span>
-          <span>{op.status === 'completed' ? `Finished: ${fmt(op.completedAt)}` : `${op.progress}%`}</span>
+          <span>{op.status === 'completed' || op.status === 'failed' ? `Ended: ${fmt(op.completedAt)}` : `${op.progress}%`}</span>
         </div>
+        {(op.initiatedBy || (op.startedAt && op.completedAt)) && (
+          <div className="flex flex-wrap gap-x-5 mt-1.5 text-xs text-[#737373] dark:text-[#94a3b8]">
+            {op.initiatedBy && (
+              <span className="flex items-center gap-1"><User size={11} />{op.initiatedBy}</span>
+            )}
+            {op.startedAt && op.completedAt && (
+              <span>Duration: {dur(Math.floor((new Date(op.completedAt).getTime() - new Date(op.startedAt).getTime()) / 1000))}</span>
+            )}
+          </div>
+        )}
       </div>
 
       {op.procedures.length > 0 && (

@@ -10,6 +10,11 @@ function dur(secs?: number) {
   return m ? `${m}m ${s}s` : `${s}s`
 }
 
+function fmt(s?: string) {
+  if (!s) return '—'
+  return new Date(s).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+}
+
 export default async function OpProceduresPage({
   params,
 }: {
@@ -37,6 +42,22 @@ export default async function OpProceduresPage({
           </div>
           <StatusBadge status={op.status} />
         </div>
+      </div>
+
+      <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 grid grid-cols-4 divide-x divide-[#e5e5e5] dark:divide-[#334155]">
+        {[
+          { label: 'Operator',  value: op.initiatedBy ?? '—' },
+          { label: 'Started',   value: fmt(op.startedAt) },
+          { label: 'Completed', value: fmt(op.completedAt) },
+          { label: 'Duration',  value: op.startedAt && op.completedAt
+              ? dur(Math.floor((new Date(op.completedAt).getTime() - new Date(op.startedAt).getTime()) / 1000))
+              : '—' },
+        ].map(m => (
+          <div key={m.label} className="px-5 py-4">
+            <p className="text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] mb-1">{m.label}</p>
+            <p className="text-sm font-medium text-[#18163f] dark:text-[#e2e8f0] font-mono truncate">{m.value}</p>
+          </div>
+        ))}
       </div>
 
       <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 px-6 py-5">

@@ -20,6 +20,7 @@ export interface Operation {
   procedureCount: number
   completedCount: number
   procedures: Procedure[]
+  initiatedBy?: string
 }
 
 export interface Bank {
@@ -40,4 +41,7 @@ export interface HistoryEntry {
   duration: number
   proceduresRun: number
   proceduresFailed: number
+  startedAt?: string
+  completedAt?: string
+  initiatedBy?: string
 }
