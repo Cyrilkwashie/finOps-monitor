@@ -6,9 +6,11 @@ export interface Procedure {
   status: OpStatus
   startedAt?: string
   completedAt?: string
-  duration?: number   // seconds
-  progress?: number   // 0-100 for running
+  duration?: number     // seconds (completed)
+  progress?: number     // 0-100 for running
   logs?: string[]
+  elapsed?: number      // seconds already running (for active procedures)
+  avgDuration?: number  // expected average duration in seconds
 }
 
 export interface Operation {

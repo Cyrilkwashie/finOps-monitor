@@ -45,7 +45,7 @@ export default async function ProcedureDetailPage({
       <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 grid grid-cols-3 divide-x divide-[#e5e5e5] dark:divide-[#334155]">
         {[
           { label: 'Started',   value: fmt(proc.startedAt) },
-          { label: 'Completed', value: fmt(proc.completedAt) },
+          { label: 'Completed', value: proc.status === 'running' ? 'In progress' : fmt(proc.completedAt) },
           { label: 'Duration',  value: dur(proc.duration) },
         ].map(m => (
           <div key={m.label} className="px-6 py-5">

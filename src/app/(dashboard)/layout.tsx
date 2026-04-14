@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DashboardNav } from '@/components/DashboardNav'
 import { ThemeLayout } from '@/components/ThemeProvider'
+import { AlertToast } from '@/components/AlertToast'
 
 export const metadata: Metadata = { title: 'FinOps Monitor' }
 
@@ -11,6 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-1 overflow-y-auto p-8">
         {children}
       </main>
+      <AlertToast />
     </ThemeLayout>
   )
 }
