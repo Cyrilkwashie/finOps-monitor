@@ -2,6 +2,7 @@
 import { use, useState } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react'
+
 import { banks, history } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
 
@@ -85,10 +86,9 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
           ) : (
             <div className="divide-y divide-[#f5f5f5] dark:divide-[#334155]">
               {procs.map((proc, idx) => (
-                <Link
+                <div
                   key={proc.id}
-                  href={`/banks/${bank.id}/ops/${selectedOpType.toLowerCase()}/procedures/${proc.id}`}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-[#fafafa] dark:hover:bg-white/5 transition-colors group"
+                  className="flex items-center gap-4 px-6 py-4"
                 >
                   <span className="text-xs font-mono text-[#d4d4d4] dark:text-[#334155] w-5 shrink-0 tabular-nums">{idx + 1}</span>
                   <div className={`w-2 h-2 rounded-full shrink-0 ${
@@ -109,8 +109,7 @@ export default function BankHistoryPage({ params }: { params: Promise<{ bankId: 
                     <span className="text-xs font-medium text-teal-600 dark:text-teal-400 shrink-0">{proc.progress}%</span>
                   )}
                   <StatusBadge status={proc.status} size="xs" />
-                  <ChevronRight size={15} className="text-[#d4d4d4] dark:text-[#334155] group-hover:text-[#737373] dark:group-hover:text-[#94a3b8] transition-colors shrink-0" />
-                </Link>
+                </div>
               ))}
             </div>
           )}
