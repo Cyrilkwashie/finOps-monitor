@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getBankById } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
 import { ChevronLeft, History, Clock, CheckCircle2, AlertTriangle, Loader2, User } from 'lucide-react'
@@ -117,8 +118,8 @@ export default async function BankDetailPage({ params }: { params: Promise<{ ban
             <ChevronLeft size={16} /> All Banks
           </Link>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#18163f] dark:bg-[#2dd4bf]/10 dark:ring-1 dark:ring-[#2dd4bf]/30 text-[#2dd4bf] flex items-center justify-center text-sm font-bold font-mono">
-              {bank.code}
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white dark:bg-white/10 p-0.5 ring-1 ring-black/5 dark:ring-white/10">
+              <Image src={bank.logo} alt={bank.name} width={48} height={48} className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-semibold text-[#18163f] dark:text-[#e2e8f0]">{bank.name}</h1>

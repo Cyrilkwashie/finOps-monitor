@@ -9,14 +9,9 @@ import { StatusBadge } from '@/components/StatusBadge'
 
 const DAYS = ['Apr 8', 'Apr 9', 'Apr 10', 'Apr 11', 'Apr 12', 'Apr 13', 'Apr 14']
 const DATE_KEYS = ['2026-04-08', '2026-04-09', '2026-04-10', '2026-04-11', '2026-04-12', '2026-04-13', '2026-04-14']
-const BANK_CODES = ['FNB', 'CTB', 'HCB', 'MRB', 'APB']
-const BANK_COLORS: Record<string, string> = {
-  FNB: '#18163f',
-  CTB: '#2dd4bf',
-  HCB: '#f97316',
-  MRB: '#6366f1',
-  APB: '#10b981',
-}
+const BANK_CODES = banks.map(b => b.code)
+const PALETTE = ['#18163f', '#2dd4bf', '#f97316', '#6366f1', '#10b981', '#e11d48']
+const BANK_COLORS: Record<string, string> = Object.fromEntries(banks.map((b, i) => [b.code, PALETTE[i % PALETTE.length]]))
 
 function fmtDuration(s: number) {
   const m = Math.floor(s / 60)
@@ -25,10 +20,9 @@ function fmtDuration(s: number) {
 
 const sodDurationTrend = DATE_KEYS.map((dk, i) => {
   const row: Record<string, string | number> = { date: DAYS[i] }
-  for (const code of BANK_CODES) {
-    const bank = banks.find(b => b.code === code)!
+  for (const bank of banks) {
     const entry = history.find(h => h.date === dk && h.bankId === bank.id && h.opType === 'SOD')
-    row[code] = entry?.status === 'completed' ? entry.duration : 0
+    row[bank.code] = entry?.status === 'completed' ? entry.duration : 0
   }
   return row
 })
@@ -130,7 +124,7 @@ export default function AnalyticsPage() {
             <h2 className="text-base font-semibold text-[#18163f] dark:text-[#e2e8f0]">SOD Duration Trend</h2>
             <p className="text-sm text-[#737373] dark:text-[#94a3b8]">Start-of-day run time per bank over 7 days</p>
           </div>
-          <DurationTrendChart data={sodDurationTrend} banks={banks.map(b => ({ code: b.code }))} />
+          <DurationTrendChart data={sodDurationTrend} banks={banks.map((b, i) => ({ code: b.code, color: PALETTE[i % PALETTE.length] }))} />
         </div>
 
         <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 p-6">

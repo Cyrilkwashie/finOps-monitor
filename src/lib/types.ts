@@ -11,6 +11,12 @@ export interface Procedure {
   logs?: string[]
   elapsed?: number      // seconds already running (for active procedures)
   avgDuration?: number  // expected average duration in seconds
+  seq?: number          // PREOCESS_SEQ — sequence within the operation
+  processId?: string    // PROCESS_ID — unique procedure identifier
+  processProc?: string  // PROCESS_PROC — PL/SQL procedure call
+  enabled?: 'Y' | 'N'  // ENABLED
+  transReq?: 'Y' | 'N' | 'Z'  // TRANS_REQ — transaction required
+  exeOnWknd?: 'Y' | 'N'       // EXE_ON_WKND — execute on weekends
 }
 
 export interface Operation {
@@ -31,6 +37,7 @@ export interface Bank {
   code: string
   country: string
   tier: 'tier1' | 'tier2' | 'tier3'
+  logo: string
   lastUpdated: string
   operations: { SOD: Operation; POD: Operation; EOD: Operation }
 }

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getBankById } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
-import { ChevronLeft, Terminal } from 'lucide-react'
+import { ChevronLeft, Terminal, Code2 } from 'lucide-react'
 
 export default async function ProcedureDetailPage({
   params,
@@ -55,6 +55,43 @@ export default async function ProcedureDetailPage({
         ))}
       </div>
 
+      {(proc.processId || proc.seq !== undefined) && (
+        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 px-6 py-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-4">
+            {proc.processId && (
+              <div className="col-span-2 sm:col-span-3">
+                <p className="text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] mb-1">Process ID</p>
+                <p className="text-xs font-mono text-[#18163f] dark:text-[#e2e8f0] break-all">{proc.processId}</p>
+              </div>
+            )}
+            {proc.seq !== undefined && (
+              <div>
+                <p className="text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] mb-1">Sequence</p>
+                <p className="text-sm font-mono text-[#18163f] dark:text-[#e2e8f0]">#{proc.seq}</p>
+              </div>
+            )}
+            {proc.enabled && (
+              <div>
+                <p className="text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] mb-1">Enabled</p>
+                <p className={`text-sm font-medium ${proc.enabled === 'Y' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`}>{proc.enabled === 'Y' ? 'Yes' : 'No'}</p>
+              </div>
+            )}
+            {proc.transReq && (
+              <div>
+                <p className="text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] mb-1">Trans Req</p>
+                <p className="text-sm font-mono text-[#18163f] dark:text-[#e2e8f0]">{proc.transReq}</p>
+              </div>
+            )}
+            {proc.exeOnWknd && (
+              <div>
+                <p className="text-xs uppercase tracking-widest text-[#737373] dark:text-[#94a3b8] mb-1">Runs on Weekend</p>
+                <p className={`text-sm font-medium ${proc.exeOnWknd === 'Y' ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#737373] dark:text-[#94a3b8]'}`}>{proc.exeOnWknd === 'Y' ? 'Yes' : 'No'}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {proc.status === 'running' && proc.progress !== undefined && (
         <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-teal-200 dark:ring-teal-500/30 px-6 py-5">
           <div className="flex items-center justify-between mb-3 text-sm text-[#737373] dark:text-[#94a3b8]">
@@ -63,6 +100,18 @@ export default async function ProcedureDetailPage({
           </div>
           <div className="h-2.5 bg-[#e5e5e5] dark:bg-[#334155] rounded-full overflow-hidden">
             <div className="h-full rounded-full bg-[#2dd4bf]" style={{ width: `${proc.progress}%` }} />
+          </div>
+        </div>
+      )}
+
+      {proc.processProc && (
+        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5 overflow-hidden">
+          <div className="flex items-center gap-2.5 px-6 py-4 border-b border-[#e5e5e5] dark:border-[#334155]">
+            <Code2 size={16} className="text-[#737373] dark:text-[#94a3b8]" />
+            <span className="text-sm font-medium text-[#18163f] dark:text-[#e2e8f0]">Procedure Call</span>
+          </div>
+          <div className="bg-[#0a0a0a] dark:bg-[#020617] rounded-b-2xl p-5 font-mono text-sm text-[#2dd4bf]">
+            {proc.processProc}
           </div>
         </div>
       )}

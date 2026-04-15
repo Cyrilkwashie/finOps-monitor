@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { banks } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
 import { BarChart2, AlertTriangle, CheckCircle2, Loader2, Clock } from 'lucide-react'
@@ -80,10 +81,8 @@ export default function DashboardPage() {
               }`}>
                 <div className="px-6 pt-5 pb-4 flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold font-mono ${
-                      hasAlert ? 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400' : 'bg-[#18163f]/5 dark:bg-white/5 text-[#18163f] dark:text-[#e2e8f0]'
-                    }`}>
-                      {bank.code}
+                    <div className="w-10 h-10 rounded-xl overflow-hidden bg-white dark:bg-white/10 p-0.5 ring-1 ring-black/5 dark:ring-white/10 shrink-0">
+                      <Image src={bank.logo} alt={bank.name} width={40} height={40} className="w-full h-full object-contain" />
                     </div>
                     <div>
                       <p className="text-base font-medium text-[#18163f] dark:text-[#e2e8f0] leading-tight">{bank.name}</p>

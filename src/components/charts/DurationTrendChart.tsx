@@ -5,17 +5,11 @@ import {
 } from 'recharts'
 import { useTheme } from '@/components/ThemeProvider'
 
-const BANK_COLORS: Record<string, string> = {
-  FNB: '#18163f',
-  CTB: '#2dd4bf',
-  HCB: '#f97316',
-  MRB: '#6366f1',
-  APB: '#10b981',
-}
+const FALLBACK_COLORS = ['#18163f','#2dd4bf','#f97316','#6366f1','#10b981','#e11d48']
 
 type Props = {
   data: Record<string, string | number>[]
-  banks: { code: string }[]
+  banks: { code: string; color?: string }[]
 }
 
 export function DurationTrendChart({ data, banks }: Props) {
@@ -55,17 +49,20 @@ export function DurationTrendChart({ data, banks }: Props) {
           iconSize={8}
           wrapperStyle={{ fontSize: 12, paddingTop: 8, color: tickColor }}
         />
-        {banks.map(b => (
-          <Line
-            key={b.code}
-            type="monotone"
-            dataKey={b.code}
-            stroke={BANK_COLORS[b.code]}
-            strokeWidth={2}
-            dot={{ r: 3, fill: BANK_COLORS[b.code] }}
-            activeDot={{ r: 5 }}
-          />
-        ))}
+        {banks.map((b, i) => {
+          const color = b.color ?? FALLBACK_COLORS[i % FALLBACK_COLORS.length]
+          return (
+            <Line
+              key={b.code}
+              type="monotone"
+              dataKey={b.code}
+              stroke={color}
+              strokeWidth={2}
+              dot={{ r: 3, fill: color }}
+              activeDot={{ r: 5 }}
+            />
+          )
+        })}
       </LineChart>
     </ResponsiveContainer>
   )
